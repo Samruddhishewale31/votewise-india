@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #004790;
+  --color-primary-container: #d6e3ff;
+  --color-secondary: #ff9933; /* Saffron accent */
+  --color-tertiary: #128807; /* Green accent */
+  --color-surface: #f8f9fa;
+  --color-on-surface-variant: #44474e;
+  
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  
+  --font-sans: 'Public Sans', sans-serif;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+  }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-white text-gray-900 min-h-screen flex flex-col selection:bg-primary-container selection:text-primary transition-colors duration-200;
+    font-family: 'Public Sans', sans-serif;
+  }
+  
+  /* High contrast mode variables when applied to body */
+  body.hc {
+    --color-primary: #002244;
+    --color-secondary: #cc6600;
+    --color-tertiary: #004d00;
+    @apply text-black;
+  }
+}
+
+@layer utilities {
+  .hero-gradient {
+    background: radial-gradient(circle at 70% 50%, rgba(255, 153, 51, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 30% 80%, rgba(18, 136, 7, 0.05) 0%, transparent 50%);
+  }
+}
+
+/* Material Symbols configuration */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+  
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
