@@ -1,12 +1,27 @@
+"use client";
+
+import { useEffect, Suspense } from "react";
 import { learningPathsData } from "@/data/learningPaths";
 import { ArrowRight, BookOpen, Clock, CheckCircle } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { saveUserData } from "@/lib/firestore";
+import { trackEvent } from "@/lib/analytics";
 
-export default async function LearnPage(props: { searchParams: Promise<{ path?: string }> }) {
-  const searchParams = await props.searchParams;
-  const activePathId = searchParams?.path || "first-time";
+function LearnContent() {
+  const searchParams = useSearchParams();
+  const activePathId = searchParams.get("path") || "first-time";
+  const { user } = useAuth();
   
   const activePath = learningPathsData.find(p => p.id === activePathId) || learningPathsData[0];
+
+  useEffect(() => {
+    trackEvent("learning_path_selected", { path: activePathId });
+    if (user) {
+      saveUserData(user.uid, { selectedLearningPath: activePathId });
+    }
+  }, [activePathId, user]);
 
   return (
     <div className="py-16 px-6 max-w-7xl mx-auto">
@@ -65,7 +80,12 @@ export default async function LearnPage(props: { searchParams: Promise<{ path?: 
                 </div>
               </div>
               
-              <button className="flex items-center justify-center gap-2 text-primary bg-primary/10 hover:bg-primary hover:text-white px-5 py-2.5 rounded-xl font-bold transition-all focus:ring-2 focus:ring-primary focus:outline-none">
+              <button 
+                className="flex items-center justify-center gap-2 text-primary bg-primary/10 hover:bg-primary hover:text-white px-5 py-2.5 rounded-xl font-bold transition-all focus:ring-2 focus:ring-primary focus:outline-none"
+                onClick={() => {
+                   trackEvent("resources_viewed", { module: module.title });
+                }}
+              >
                 Start Module <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -83,5 +103,13 @@ export default async function LearnPage(props: { searchParams: Promise<{ path?: 
       </div>
 
     </div>
+  );
+}
+
+export default function LearnPage() {
+  return (
+    <Suspense fallback={<div className="py-16 px-6 text-center">Loading learning paths...</div>}>
+      <LearnContent />
+    </Suspense>
   );
 }

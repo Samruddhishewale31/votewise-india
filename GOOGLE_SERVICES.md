@@ -4,20 +4,32 @@ VoteWise India focuses on deep, practical integration of Google Services to elev
 
 The application utilizes three core Google platforms:
 
-1. **Firebase Authentication (Google Sign-In)**
+1. **Firebase Core (Auth, Firestore, Analytics)**
 2. **Google Generative AI (Gemini 1.5 Flash)**
 3. **Google Maps API**
 
 ---
 
-### 1. Firebase Authentication
-**The Implementation**
-We've integrated a "Guest-First" Authentication layer using Firebase Authentication, exclusively utilizing the **Google Sign-In** provider. This ensures a frictionless flow where users are never forced to authenticate if they wish to remain anonymous, but can seamlessly choose to save preferences across devices.
+### 1. Firebase Core (Auth, Firestore, Analytics)
+**Authentication (Google Sign-In)**
+We've integrated a "Guest-First" Authentication layer using Firebase Authentication, exclusively utilizing the **Google Sign-In** provider. This ensures a frictionless flow where users are never forced to authenticate if they wish to remain anonymous.
+
+**Firestore Persistence**
+We utilize a clean helper layer (`src/lib/firestore.ts`) to persist meaningful user data securely:
+- Quiz and learning module progress
+- Selected learning path
+- Accessibility preferences
+- Last activity timestamp
+
+**Firebase Analytics**
+We track key user journeys to improve the civic education experience:
+- Events tracked: `login_success`, `guest_mode_selected`, `learning_path_selected`, `resources_viewed`, `quiz_started`, `quiz_completed`, `assistant_question_asked`, `accessibility_setting_changed`.
+- These are implemented safely as no-ops if analytics are disabled.
 
 **Why It Is Meaningful**
-- **Inclusivity First**: True to a public tool, the Guest model allows total access without surrendering data.
-- **Security & Privacy**: Leverages Google’s secure identity tooling instead of custom, fragile credential structures.
-- **Technical Rigor**: Fully fallback-safe. If ENV boundaries are disconnected, the interface natively degrades to Guest mode natively without hard-crashing validation failures.
+- **Inclusivity First**: True to a public tool, the Guest model allows total access without surrendering data. Google Sign-In makes syncing data across devices effortless.
+- **Security & Privacy**: Leverages Google’s secure identity tooling. Firestore permissions map perfectly to the authenticated user.
+- **Technical Rigor**: Fully fallback-safe. If ENV boundaries are disconnected, the interface gracefully degrades to Guest mode and uses local storage natively without hard-crashing.
 
 ### 2. Gemini API Integration
 **The Implementation**

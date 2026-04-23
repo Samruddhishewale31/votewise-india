@@ -67,14 +67,20 @@ export function TopAppBar() {
                 {isLoading ? (
                   <div className="h-10 w-24 bg-gray-100 animate-pulse rounded-full"></div>
                 ) : user ? (
-                  <div className="flex items-center gap-2 group relative">
-                    <img src={user.photoURL || ""} alt="User Avatar" className="w-10 h-10 rounded-full border-2 border-primary/20" />
-                    <button 
-                      onClick={logOut}
-                      className="absolute right-0 top-12 bg-white border border-gray-100 shadow-xl rounded-xl p-2 hidden group-hover:flex items-center gap-2 font-semibold text-sm text-gray-700 hover:bg-gray-50 min-w-max"
-                    >
-                      <LogOut className="w-4 h-4" /> Sign Out
-                    </button>
+                  <div className="flex items-center gap-4">
+                    <div className="hidden md:flex items-center gap-1.5 text-xs font-bold text-green-600 bg-green-50 px-3 py-1.5 rounded-full border border-green-100" title="Progress synced to cloud">
+                      <span className="material-symbols-outlined text-[16px]" aria-hidden="true">cloud_done</span>
+                      Synced
+                    </div>
+                    <div className="flex items-center gap-2 group relative">
+                      <img src={user.photoURL || ""} alt="User Avatar" className="w-10 h-10 rounded-full border-2 border-primary/20" />
+                      <button 
+                        onClick={logOut}
+                        className="absolute right-0 top-12 bg-white border border-gray-100 shadow-xl rounded-xl p-2 hidden group-hover:flex items-center gap-2 font-semibold text-sm text-gray-700 hover:bg-gray-50 min-w-max"
+                      >
+                        <LogOut className="w-4 h-4" /> Sign Out
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   <button

@@ -3,10 +3,23 @@
 import { useState } from "react";
 import { Search, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { trackEvent } from "@/lib/analytics";
+import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
+
+const mapContainerStyle = { width: "100%", height: "100%" };
+const center = { lat: 28.6139, lng: 77.2090 }; // Placeholder for New Delhi
 
 export default function ResourcesPage() {
   const [searchState, setSearchState] = useState<"idle" | "searching" | "found">("idle");
   const [epicNumber, setEpicNumber] = useState("");
+
+  const mapsApiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
+  const { isLoaded: isMapLoaded, loadError } = useJsApiLoader({
+    id: 'google-map-script',
+    googleMapsApiKey: mapsApiKey,
+  });
+
+  const mapsAvailable = !!mapsApiKey && !loadError;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,6 +29,7 @@ export default function ResourcesPage() {
     // Simulate API lookup
     setTimeout(() => {
       setSearchState("found");
+      trackEvent("resources_viewed", { epicNumber: epicNumber });
     }, 1500);
   };
 
@@ -87,6 +101,15 @@ export default function ResourcesPage() {
                    <p className="font-medium text-lg">Waiting for search criteria</p>
                    <p className="text-sm">Enter your EPIC number to view map</p>
                 </div>
+              ) : mapsAvailable && isMapLoaded ? (
+                 <GoogleMap
+                    mapContainerStyle={mapContainerStyle}
+                    center={center}
+                    zoom={15}
+                    options={{ disableDefaultUI: true, zoomControl: true }}
+                 >
+                    <Marker position={center} />
+                 </GoogleMap>
               ) : (
                 <>
                   {/* Fake map image background */}

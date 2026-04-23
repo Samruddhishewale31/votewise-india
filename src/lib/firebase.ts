@@ -1,5 +1,7 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
+import { getAnalytics, isSupported } from "firebase/analytics";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -20,5 +22,16 @@ const app = isFirebaseConfigured
 
 const auth = app ? getAuth(app) : null;
 const googleProvider = app ? new GoogleAuthProvider() : null;
+const db = app ? getFirestore(app) : null;
 
-export { app, auth, googleProvider, isFirebaseConfigured };
+// Analytics can only be initialized on the client side where window is defined
+let analytics: any = null;
+if (app && typeof window !== "undefined") {
+  isSupported().then((supported) => {
+    if (supported) {
+      analytics = getAnalytics(app);
+    }
+  });
+}
+
+export { app, auth, googleProvider, db, analytics, isFirebaseConfigured };

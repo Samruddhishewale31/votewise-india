@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { User, signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
 import { auth, googleProvider, isFirebaseConfigured } from "@/lib/firebase";
+import { trackEvent } from "@/lib/analytics";
 
 interface AuthContextType {
   user: User | null;
@@ -48,7 +49,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     try {
       setIsLoading(true);
-      await signInWithPopup(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
+      if (result.user) {
+        trackEvent('login_success', { method: 'google' });
+      }
     } catch (error) {
       console.error("Sign-in failed:", error);
     } finally {

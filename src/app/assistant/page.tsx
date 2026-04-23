@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Send, Bot, User, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import ReactMarkdown from "react-markdown";
+import { trackEvent } from "@/lib/analytics";
 
 type Message = {
   role: "user" | "assistant";
@@ -34,6 +35,8 @@ export default function AssistantPage() {
     setInputStr("");
     setMessages((prev) => [...prev, { role: "user", content: query }]);
     setIsLoading(true);
+    
+    trackEvent("assistant_question_asked", { queryLength: query.length });
 
     try {
       const response = await fetch("/api/assistant", {

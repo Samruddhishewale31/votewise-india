@@ -5,12 +5,16 @@ import { quizQuestions, calculateReadinessScore } from "@/data/quizData";
 import { ArrowLeft, ArrowRight, RotateCcw } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
+import { saveUserData } from "@/lib/firestore";
+import { trackEvent } from "@/lib/analytics";
 
 export default function QuizPage() {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number>>({});
   const [showResults, setShowResults] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     const savedStats = localStorage.getItem("vw_quizProgress");
@@ -42,7 +46,19 @@ export default function QuizPage() {
 
   const handleSelect = (optionIdx: number) => {
     if (hasAnsweredCurrent) return; // Prevent changing answer
-    setSelectedAnswers(prev => ({ ...prev, [currentQ.id]: optionIdx }));
+    
+    if (currentIdx === 0 && Object.keys(selectedAnswers).length === 0) {
+      trackEvent("quiz_started");
+    }
+
+    const newAnswers = { ...selectedAnswers, [currentQ.id]: optionIdx };
+    setSelectedAnswers(newAnswers);
+    
+    if (user) {
+      saveUserData(user.uid, {
+        quizProgress: newAnswers as any
+      });
+    }
   };
 
   const handleNext = () => {
@@ -50,6 +66,12 @@ export default function QuizPage() {
       setCurrentIdx(currentIdx + 1);
     } else {
       setShowResults(true);
+      trackEvent("quiz_completed", { score: score });
+      if (user) {
+         saveUserData(user.uid, {
+           quizProgress: selectedAnswers as any
+         });
+      }
     }
   };
 
