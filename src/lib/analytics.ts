@@ -19,7 +19,7 @@ export type AnalyticsEventName =
  * @param eventName The name of the event to track
  * @param eventParams Optional parameters to include with the event
  */
-export const trackEvent = (eventName: AnalyticsEventName, eventParams?: Record<string, any>) => {
+export const trackEvent = (eventName: AnalyticsEventName, eventParams?: Record<string, unknown>) => {
   if (!analytics) {
     // Graceful fallback: do nothing if Firebase or Analytics is not configured
     // console.debug(`[Analytics Mock] Event Tracked: ${eventName}`, eventParams);

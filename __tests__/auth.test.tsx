@@ -16,7 +16,7 @@ vi.mock('@/contexts/AccessibilityContext', () => ({
 
 // Create a component just to expose context for testing
 function MockAuthConsumer() {
-  const { user, isGuest, firebaseEnabled, signIn } = useAuth();
+  const { isGuest, firebaseEnabled, signIn } = useAuth();
   return (
     <div>
       <span data-testid="is-guest">{isGuest.toString()}</span>

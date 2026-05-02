@@ -2,7 +2,7 @@
 
 import { useEffect, Suspense } from "react";
 import { learningPathsData } from "@/data/learningPaths";
-import { ArrowRight, BookOpen, Clock, CheckCircle } from "lucide-react";
+import { ArrowRight, BookOpen, Clock } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";

@@ -1,7 +1,7 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { getAnalytics, isSupported } from "firebase/analytics";
+import { getAnalytics, isSupported, type Analytics } from "firebase/analytics";
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -25,7 +25,7 @@ const googleProvider = app ? new GoogleAuthProvider() : null;
 const db = app ? getFirestore(app) : null;
 
 // Analytics can only be initialized on the client side where window is defined
-let analytics: any = null;
+let analytics: Analytics | null = null;
 if (app && typeof window !== "undefined") {
   isSupported().then((supported) => {
     if (supported) {
